@@ -24,11 +24,10 @@ const OfflinePlaceholder: FC<GreetingWidgetProps> = ({ userName }) => (
 
 const RemoteGreeting = lazy(
   async (): Promise<{ default: FC<GreetingWidgetProps> }> => {
-    const isAvailable = await fetch(REMOTE_ENTRY_URL, {
-      signal: AbortSignal.timeout(3000),
-    })
-      .then((r) => r.ok)
-      .catch(() => false);
+    const isAvailable = await Promise.race([
+      fetch(REMOTE_ENTRY_URL).then((r) => r.ok).catch(() => false),
+      new Promise<false>((resolve) => setTimeout(() => resolve(false), 800)),
+    ]);
 
     if (!isAvailable) {
       return { default: OfflinePlaceholder };
