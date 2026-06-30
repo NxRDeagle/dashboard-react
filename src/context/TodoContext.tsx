@@ -67,6 +67,19 @@ export const TodoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [items, updateItems],
   );
 
+  const reorderTodos = useCallback((activeId: string, overId: string) => {
+    setItems((prev: TodoItem[]) => {
+      const oldIndex = prev.findIndex((item: TodoItem) => item.id === activeId);
+      const newIndex = prev.findIndex((item: TodoItem) => item.id === overId);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      const next = [...prev];
+      const [removed] = next.splice(oldIndex, 1);
+      next.splice(newIndex, 0, removed);
+      saveTodos(next);
+      return next;
+    });
+  }, []);
+
   const todayItems = useMemo(
     () => items.filter((item) => item.date === getTodayDate()),
     [items],
@@ -89,6 +102,7 @@ export const TodoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         addTodo,
         toggleTodo,
         removeTodo,
+        reorderTodos,
       }}
     >
       {children}

@@ -2,3 +2,23 @@
 
 /* Enable class-based dark mode (.dark on <html>) instead of media-query default */
 @custom-variant dark (&:where(.dark, .dark *));
+
+.wobbling {
+  animation: wobble 0.2s ease-in-out infinite alternate;
+  cursor: grab;
+  user-select: none;
+  transform-origin: center;
+}
+
+.wobbling:active {
+  cursor: grabbing;
+}
+
+@keyframes wobble {
+  0% {
+    transform: rotate(-0.5deg);
+  }
+  100% {
+    transform: rotate(0.5deg);
+  }
+}

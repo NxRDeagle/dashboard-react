@@ -4,4 +4,5 @@ export const STORAGE_KEYS = {
   theme: "theme",
   user: "user",
   location: "location",
+  widgetOrder: "widget_order",
 };

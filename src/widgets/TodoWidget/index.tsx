@@ -1,12 +1,36 @@
-import { useState, type FC, type FormEvent } from "react";
+import { useState, type FC } from "react";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { useTodo } from "../../context/TodoContext";
-import { Tooltip } from "../../components/Tooltip";
+import { SortableTodoItem } from "../../components/SortableTodoItem";
 
 export const TodoWidget: FC = () => {
-  const { todayItems, addTodo, toggleTodo, removeTodo } = useTodo();
+  const { todayItems, addTodo, toggleTodo, removeTodo, reorderTodos } =
+    useTodo();
   const [input, setInput] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      reorderTodos(active.id?.toString(), over.id?.toString());
+    }
+  };
+
+  const handleSubmit = (e: { preventDefault(): void }) => {
     e.preventDefault();
     const text = input.trim();
     if (!text) return;
@@ -20,52 +44,32 @@ export const TodoWidget: FC = () => {
         Today's Tasks
       </p>
 
-      <ul className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1 [scrollbar-width:thin] [scrollbar-color:#D1D5DB_transparent] dark:[scrollbar-color:#4B5563_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
-        {todayItems.length === 0 && (
-          <li className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
-            No tasks yet — add one below!
-          </li>
-        )}
-        {todayItems.map((item) => (
-          <li key={item.id} className="flex items-start gap-2 group">
-            <button
-              onClick={() => toggleTodo(item.id)}
-              className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                item.completed
-                  ? "bg-blue-500 border-blue-500 text-white"
-                  : "border-gray-300 dark:border-gray-600 hover:border-blue-400"
-              }`}
-            >
-              {item.completed && (
-                <span className="text-xs leading-none">✓</span>
-              )}
-            </button>
-
-            <Tooltip
-              content={item.text}
-              delay={1000}
-              className="flex-1 min-w-0"
-            >
-              <span
-                className={`text-sm truncate block ${
-                  item.completed
-                    ? "line-through text-gray-400 dark:text-gray-600"
-                    : "text-gray-700 dark:text-gray-300"
-                }`}
-              >
-                {item.text}
-              </span>
-            </Tooltip>
-
-            <button
-              onClick={() => removeTodo(item.id)}
-              className="mt-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 text-xs transition-opacity"
-            >
-              ✕
-            </button>
-          </li>
-        ))}
-      </ul>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={todayItems.map((i) => i.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <ul className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1 [scrollbar-width:thin] [scrollbar-color:#D1D5DB_transparent] dark:[scrollbar-color:#4B5563_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
+            {todayItems.length === 0 && (
+              <li className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+                No tasks yet — add one below!
+              </li>
+            )}
+            {todayItems.map((item) => (
+              <SortableTodoItem
+                key={item.id}
+                item={item}
+                onToggle={toggleTodo}
+                onRemove={removeTodo}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
 
       <form onSubmit={handleSubmit} className="flex gap-2 mt-4 flex-shrink-0">
         <input

@@ -16,4 +16,11 @@ export interface TodoContextValue {
   addTodo: (text: string) => void;
   toggleTodo: (id: string) => void;
   removeTodo: (id: string) => void;
+  reorderTodos: (activeId: string, overId: string) => void;
+}
+
+export interface SortableTodoItemProps {
+  item: TodoItem;
+  onToggle: (id: string) => void;
+  onRemove: (id: string) => void;
 }
