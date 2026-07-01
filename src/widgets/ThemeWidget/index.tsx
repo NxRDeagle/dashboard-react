@@ -1,28 +1,29 @@
 import type { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
 import type { Theme } from "../../types/theme.types";
 
-interface ThemeOption {
-  value: Theme;
-  label: string;
-  icon: string;
-}
-
-const THEME_OPTIONS: ThemeOption[] = [
-  { value: "light", label: "Light", icon: "☀️" },
-  { value: "dark", label: "Dark", icon: "🌙" },
+const THEME_OPTIONS: { value: Theme; icon: string }[] = [
+  { value: "light", icon: "☀️" },
+  { value: "dark", icon: "🌙" },
 ];
+
+const THEME_LABEL_KEYS = {
+  light: "widgets.theme.light",
+  dark: "widgets.theme.dark",
+} as const;
 
 export const ThemeWidget: FC = () => {
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 h-full">
       <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">
-        Appearance
+        {t("widgets.theme.title")}
       </p>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        Choose your preferred theme
+        {t("widgets.theme.subtitle")}
       </p>
       <div className="flex gap-3">
         {THEME_OPTIONS.map((option) => (
@@ -36,7 +37,7 @@ export const ThemeWidget: FC = () => {
             }`}
           >
             <span>{option.icon}</span>
-            <span>{option.label}</span>
+            <span>{t(THEME_LABEL_KEYS[option.value])}</span>
           </button>
         ))}
       </div>

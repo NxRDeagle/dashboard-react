@@ -1,17 +1,21 @@
 import type { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { useClock } from "../../hooks/useClock";
 import { useLocation } from "../../context/LocationContext";
 
 export const ClockWidget: FC = () => {
   const { location } = useLocation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === "ru" ? "ru-RU" : "en-US";
   const { hours, minutes, seconds, day, dayName, monthName, year } = useClock(
     location?.timezone,
+    locale,
   );
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 h-full">
       <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">
-        Clock & Calendar
+        {t("widgets.clock.title")}
       </p>
       <div className="text-4xl font-bold tabular-nums text-gray-900 dark:text-white tracking-tight">
         {hours}

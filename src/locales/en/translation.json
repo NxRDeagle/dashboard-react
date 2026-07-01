@@ -1,0 +1,65 @@
+{
+  "header": {
+    "title": "Dashboard",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "welcome": "Welcome back",
+    "subtitle": "Sign in to your dashboard",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "loginFailed": "Login failed",
+    "testCredentials": "Test credentials"
+  },
+  "widgets": {
+    "edit": "Edit",
+    "done": "Done",
+    "greeting": {
+      "title": "Greeting · Remote MFE ✦",
+      "hello": "Hello, {{userName}}!",
+      "offlinePrefix": "Run ",
+      "offlineSuffix": " to load the live widget from port 8081."
+    },
+    "clock": {
+      "title": "Clock & Calendar"
+    },
+    "weather": {
+      "title": "Weather",
+      "noLocation": "Set your location to see weather",
+      "unavailable": "Weather data unavailable",
+      "feelsLike": "Feels like",
+      "wind": "Wind"
+    },
+    "theme": {
+      "title": "Appearance",
+      "subtitle": "Choose your preferred theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "location": {
+      "title": "Location",
+      "detecting": "Detecting location…",
+      "autoDetected": "Auto-detected",
+      "setManually": "Set manually",
+      "noLocation": "No location set",
+      "searchPlaceholder": "Search city…",
+      "searchFailed": "Search failed",
+      "useMyLocation": "Use my location"
+    },
+    "todo": {
+      "title": "Today's Tasks",
+      "empty": "No tasks yet — add one below!",
+      "placeholder": "Add a task...",
+      "add": "Add",
+      "dragToReorder": "Drag to reorder"
+    },
+    "dayProgress": {
+      "title": "Day Progress",
+      "tasksDone": "tasks done",
+      "allDone": "All done! 🎉",
+      "addTasks": "Add tasks to track progress"
+    }
+  }
+}

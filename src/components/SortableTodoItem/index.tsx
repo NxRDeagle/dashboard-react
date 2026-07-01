@@ -1,13 +1,34 @@
 import type { FC, CSSProperties } from "react";
+import { useTranslation } from "react-i18next";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { SortableTodoItemProps } from "../../types/todo.types";
+import type {
+  SortableTodoItemProps,
+  TodoPriority,
+} from "../../types/todo.types";
 import { Tooltip } from "../Tooltip";
 import { DragHandle } from "../DragHandle";
 
-export const SortableTodoItem: FC<SortableTodoItemProps> = ({ item, onToggle, onRemove }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: item.id });
+const PRIORITY_DOT: Record<TodoPriority, string> = {
+  high: "bg-red-400",
+  medium: "bg-amber-400",
+  low: "bg-gray-300 dark:bg-gray-600",
+};
+
+export const SortableTodoItem: FC<SortableTodoItemProps> = ({
+  item,
+  onToggle,
+  onRemove,
+}) => {
+  const { t } = useTranslation();
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -22,7 +43,7 @@ export const SortableTodoItem: FC<SortableTodoItemProps> = ({ item, onToggle, on
         className="mt-0.5 flex-shrink-0 cursor-grab active:cursor-grabbing touch-none opacity-0 group-hover:opacity-100 transition-opacity"
         {...attributes}
         {...listeners}
-        aria-label="Drag to reorder"
+        aria-label={t("widgets.todo.dragToReorder")}
       >
         <DragHandle />
       </button>
@@ -37,6 +58,11 @@ export const SortableTodoItem: FC<SortableTodoItemProps> = ({ item, onToggle, on
       >
         {item.completed && <span className="text-xs leading-none">✓</span>}
       </button>
+
+      <span
+        className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${PRIORITY_DOT[item.priority]}`}
+        title={`${item.priority} priority`}
+      />
 
       <Tooltip content={item.text} delay={1000} className="flex-1 min-w-0">
         <span

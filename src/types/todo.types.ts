@@ -1,4 +1,4 @@
-export type TodoPriority = "low" | "medium" | "high"; // TODO: приоритеты задач?
+export type TodoPriority = "low" | "medium" | "high";
 
 export interface TodoItem {
   id: string;
@@ -13,7 +13,7 @@ export interface TodoContextValue {
   items: TodoItem[];
   todayItems: TodoItem[];
   todayProgress: number;
-  addTodo: (text: string) => void;
+  addTodo: (text: string, priority?: TodoPriority) => void;
   toggleTodo: (id: string) => void;
   removeTodo: (id: string) => void;
   reorderTodos: (activeId: string, overId: string) => void;

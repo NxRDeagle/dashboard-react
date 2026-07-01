@@ -1,25 +1,31 @@
 import type { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { useTodo } from "../../context/TodoContext";
 
 const RADIUS = 54;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-function progressColor(pct: number): string {
+function progressColor(pct: number, urgentCount: number): string {
   if (pct === 100) return "#22c55e";
+  if (urgentCount > 0) return "#ef4444";
   if (pct >= 50) return "#3b82f6";
   return "#f59e0b";
 }
 
 export const DayProgressWidget: FC = () => {
   const { todayItems, todayProgress } = useTodo();
+  const { t } = useTranslation();
   const completedCount = todayItems.filter((item) => item.completed).length;
+  const urgentCount = todayItems.filter(
+    (item) => item.priority === "high" && !item.completed,
+  ).length;
   const strokeDashoffset =
     CIRCUMFERENCE - (todayProgress / 100) * CIRCUMFERENCE;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 h-full">
       <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">
-        Day Progress
+        {t("widgets.dayProgress.title")}
       </p>
       <div className="flex items-center gap-5">
         <div className="relative w-32 h-32 flex-shrink-0">
@@ -43,7 +49,7 @@ export const DayProgressWidget: FC = () => {
               cy="64"
               r={RADIUS}
               fill="none"
-              stroke={progressColor(todayProgress)}
+              stroke={progressColor(todayProgress, urgentCount)}
               strokeWidth="10"
               strokeDasharray={CIRCUMFERENCE}
               strokeDashoffset={strokeDashoffset}
@@ -61,15 +67,15 @@ export const DayProgressWidget: FC = () => {
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {completedCount}/{todayItems.length}
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">tasks done</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t("widgets.dayProgress.tasksDone")}</p>
           {todayProgress === 100 && todayItems.length > 0 && (
             <p className="mt-2 text-xs font-medium text-green-600 dark:text-green-400">
-              All done! 🎉
+              {t("widgets.dayProgress.allDone")}
             </p>
           )}
           {todayItems.length === 0 && (
             <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-              Add tasks to track progress
+              {t("widgets.dayProgress.addTasks")}
             </p>
           )}
         </div>

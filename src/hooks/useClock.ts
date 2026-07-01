@@ -3,7 +3,7 @@ import type { ClockState } from "../types/clock.types";
 
 export type { ClockState };
 
-export function useClock(timezone?: string): ClockState {
+export function useClock(timezone?: string, locale?: string): ClockState {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export function useClock(timezone?: string): ClockState {
   return useMemo(() => {
     const tz = timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const parts = Intl.DateTimeFormat("en-US", {
+    const parts = Intl.DateTimeFormat(locale ?? "en-US", {
       timeZone: tz,
       hour: "2-digit",
       minute: "2-digit",
@@ -40,5 +40,5 @@ export function useClock(timezone?: string): ClockState {
       monthName: get("month"),
       year: Number(get("year")),
     };
-  }, [now, timezone]);
+  }, [now, timezone, locale]);
 }

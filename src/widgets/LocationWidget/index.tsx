@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type FC, type ChangeEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "../../context/LocationContext";
 import { geocodingApi, type GeocodingResult } from "../../api/geocoding.api";
 
@@ -11,6 +12,7 @@ export const LocationWidget: FC = () => {
     setManualLocation,
     requestGeoLocation,
   } = useLocation();
+  const { t } = useTranslation();
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeocodingResult[]>([]);
@@ -19,7 +21,6 @@ export const LocationWidget: FC = () => {
   const [searchError, setSearchError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Поиск города с debounce
   useEffect(() => {
     if (query.trim().length < 2) {
       setResults([]);
@@ -36,12 +37,12 @@ export const LocationWidget: FC = () => {
           setResults(data);
           setShowDropdown(data.length > 0);
         })
-        .catch(() => setSearchError("Search failed"))
+        .catch(() => setSearchError(t("widgets.location.searchFailed")))
         .finally(() => setIsSearching(false));
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, t]);
 
   const handleSelect = (result: GeocodingResult) => {
     setManualLocation({
@@ -60,7 +61,6 @@ export const LocationWidget: FC = () => {
     setQuery(e.target.value);
   };
 
-  // Закрываем выпадашку с небольшой задежкой, чтобы город выбрался
   const handleBlur = () => {
     setTimeout(() => setShowDropdown(false), 200);
   };
@@ -68,14 +68,14 @@ export const LocationWidget: FC = () => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col gap-4">
       <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 flex-shrink-0">
-        Location
+        {t("widgets.location.title")}
       </p>
 
       <div className="flex-shrink-0">
         {isLoading ? (
           <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500">
             <span className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm">Detecting location…</span>
+            <span className="text-sm">{t("widgets.location.detecting")}</span>
           </div>
         ) : location ? (
           <div>
@@ -87,12 +87,14 @@ export const LocationWidget: FC = () => {
               {location.timezone}
             </p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-              {source === "geo" ? "● Auto-detected" : "● Set manually"}
+              {source === "geo"
+                ? `● ${t("widgets.location.autoDetected")}`
+                : `● ${t("widgets.location.setManually")}`}
             </p>
           </div>
         ) : (
           <p className="text-sm text-gray-400 dark:text-gray-500">
-            No location set
+            {t("widgets.location.noLocation")}
           </p>
         )}
         {error && (
@@ -111,7 +113,7 @@ export const LocationWidget: FC = () => {
             onChange={handleInputChange}
             onFocus={() => results.length > 0 && setShowDropdown(true)}
             onBlur={handleBlur}
-            placeholder="Search city…"
+            placeholder={t("widgets.location.searchPlaceholder")}
             className="flex-1 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-gray-800 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {isSearching && (
@@ -149,7 +151,7 @@ export const LocationWidget: FC = () => {
         className="flex-shrink-0 flex items-center justify-center gap-2 w-full py-2 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
       >
         <span>📍</span>
-        <span>Use my location</span>
+        <span>{t("widgets.location.useMyLocation")}</span>
       </button>
     </div>
   );

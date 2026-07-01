@@ -7,7 +7,11 @@ import {
   type FC,
   type ReactNode,
 } from "react";
-import type { TodoItem, TodoContextValue } from "../types/todo.types";
+import type {
+  TodoItem,
+  TodoContextValue,
+  TodoPriority,
+} from "../types/todo.types";
 import { STORAGE_KEYS } from "../constants/storage";
 
 const TodoContext = createContext<TodoContextValue | null>(null);
@@ -35,14 +39,14 @@ export const TodoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   const addTodo = useCallback(
-    (text: string) => {
+    (text: string, priority: TodoPriority = "medium") => {
       const newItem: TodoItem = {
         id: crypto.randomUUID(),
         text,
         completed: false,
         date: getTodayDate(),
         createdAt: new Date().toISOString(),
-        priority: "medium",
+        priority,
       };
       updateItems([...items, newItem]);
     },

@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { useWeather } from "../../hooks/useWeather";
 import { useLocation } from "../../context/LocationContext";
 import { WMO_WEATHER_CODES, WEATHER_ICON_MAP } from "../../constants/weather";
@@ -7,12 +8,13 @@ import { Fallback, LoadingFallback } from "../../components/Fallback";
 export const WeatherWidget: FC = () => {
   const { location } = useLocation();
   const { data, isLoading, error } = useWeather();
+  const { t } = useTranslation();
 
   if (!location && !isLoading) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 h-full flex items-center justify-center">
         <p className="text-sm text-gray-400 dark:text-gray-500 text-center">
-          Set your location to see weather
+          {t("widgets.weather.noLocation")}
         </p>
       </div>
     );
@@ -20,7 +22,7 @@ export const WeatherWidget: FC = () => {
 
   if (isLoading) return <LoadingFallback />;
   if (error || !data)
-    return <Fallback message={error ?? "Weather data unavailable"} />;
+    return <Fallback message={error ?? t("widgets.weather.unavailable")} />;
 
   const { current, current_units } = data;
   const icon = WEATHER_ICON_MAP[current.weather_code] ?? "🌡️";
@@ -29,7 +31,7 @@ export const WeatherWidget: FC = () => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 h-full">
       <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">
-        Weather · {location?.city ?? "—"}
+        {t("widgets.weather.title")} · {location?.city ?? "—"}
       </p>
       <div className="flex items-center gap-3">
         <span className="text-5xl">{icon}</span>
@@ -45,11 +47,11 @@ export const WeatherWidget: FC = () => {
       </div>
       <div className="mt-4 flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400">
         <span>
-          Feels like {Math.round(current.apparent_temperature)}
+          {t("widgets.weather.feelsLike")} {Math.round(current.apparent_temperature)}
           {current_units.apparent_temperature}
         </span>
         <span>
-          Wind {Math.round(current.wind_speed_10m)}{" "}
+          {t("widgets.weather.wind")} {Math.round(current.wind_speed_10m)}{" "}
           {current_units.wind_speed_10m}
         </span>
       </div>

@@ -1,5 +1,6 @@
 import { useState, type FC, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { authApi } from "../../api/auth.api";
 import { ROUTES } from "../../constants/routes";
@@ -12,6 +13,7 @@ export const LoginPage: FC = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -23,7 +25,7 @@ export const LoginPage: FC = () => {
       login(user, accessToken);
       void navigate(ROUTES.dashboard);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : t("login.loginFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -37,10 +39,10 @@ export const LoginPage: FC = () => {
             <span className="text-3xl">📊</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Welcome back
+            {t("login.welcome")}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-            Sign in to your dashboard
+            {t("login.subtitle")}
           </p>
         </div>
 
@@ -56,7 +58,7 @@ export const LoginPage: FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Username
+              {t("login.username")}
             </label>
             <input
               type="text"
@@ -71,7 +73,7 @@ export const LoginPage: FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Password
+              {t("login.password")}
             </label>
             <input
               type="password"
@@ -89,12 +91,12 @@ export const LoginPage: FC = () => {
             disabled={isLoading}
             className="w-full py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white rounded-lg font-medium transition-colors"
           >
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? t("login.signingIn") : t("login.signIn")}
           </button>
         </form>
 
         <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-4">
-          Test credentials: <span className="font-medium">admin</span> /{" "}
+          {t("login.testCredentials")}: <span className="font-medium">admin</span> /{" "}
           <span className="font-medium">password123</span>
         </p>
       </div>

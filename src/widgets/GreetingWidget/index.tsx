@@ -1,4 +1,5 @@
 import { Suspense, lazy, type FC } from "react";
+import { useTranslation } from "react-i18next";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { LoadingFallback } from "../../components/Fallback";
 import { useAuth } from "../../context/AuthContext";
@@ -9,18 +10,22 @@ interface GreetingWidgetProps {
   userName: string;
 }
 
-const OfflinePlaceholder: FC<GreetingWidgetProps> = ({ userName }) => (
-  <div className="bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl p-6 shadow-sm text-white h-full">
-    <p className="text-xs font-semibold uppercase tracking-widest text-gray-200 mb-3">
-      Greeting · Remote MFE ✦
-    </p>
-    <p className="text-2xl font-bold">Hello, {userName}!</p>
-    <p className="text-sm text-gray-200 mt-3">
-      Run <code className="bg-white/20 px-1 rounded">npm run start:remote</code>{" "}
-      to load the live widget from port 8081.
-    </p>
-  </div>
-);
+const OfflinePlaceholder: FC<GreetingWidgetProps> = ({ userName }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl p-6 shadow-sm text-white h-full">
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-200 mb-3">
+        {t("widgets.greeting.title")}
+      </p>
+      <p className="text-2xl font-bold">{t("widgets.greeting.hello", { userName })}</p>
+      <p className="text-sm text-gray-200 mt-3">
+        {t("widgets.greeting.offlinePrefix")}
+        <code className="bg-white/20 px-1 rounded">npm run start:remote</code>
+        {t("widgets.greeting.offlineSuffix")}
+      </p>
+    </div>
+  );
+};
 
 const RemoteGreeting = lazy(
   async (): Promise<{ default: FC<GreetingWidgetProps> }> => {
